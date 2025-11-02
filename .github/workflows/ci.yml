@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  e2e:
+    name: Cypress E2E tests
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Node Version
+        run: node --version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Executar os testes (headless)
+        run: npx cypress run
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: relatorios
+          path: |
+            cypress/reports
+            cypress/screenshots
+            cypress/videos
+      
